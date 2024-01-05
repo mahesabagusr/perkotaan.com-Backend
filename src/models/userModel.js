@@ -1,0 +1,38 @@
+import joi from 'joi';
+const regex = /^(?=.*[a-z])(?=.*[A-Z])/
+
+export const userSchema = joi.object().keys({
+  username: joi.string().required().messages({
+    'string.empty': 'Harap isi Username'
+  }),
+  email: joi.string().email().required().messages({
+    'string.empty': 'Harap isi Email',
+  }),
+  firstName: joi.string().required().messages({
+    'string.empty': 'Harap isi Nama Lengkap'
+  }),
+  lastName: joi.string().required().messages({
+    'string.empty': 'Harap isi Nama Lengkap'
+  }),
+  age: joi.number().required().messages({
+    'string.empty': 'Harap isi Nama Lengkap'
+  }),
+  password: joi.string().min(6).regex(regex).required().messages({
+    'string.empty': 'Harap isi Password',
+    'string.min': 'Harap isi password minimal 6 karakter ',
+    'string.pattern.base': 'Harap Minimal satu huruf besar'
+  })
+})
+
+export const signInSchema = joi.object({
+  username: joi.string().allow('').messages({
+    'string.empty': 'Harap isi Username atau Email',
+  }),
+  email: joi.string().email().allow('').messages({
+    'string.empty': 'Harap isi Username atau Email',
+    'string.email': 'Email tidak valid',
+  }),
+  password: joi.string().required().messages({
+    'string.empty': 'Harap isi Password',
+  }),
+}).xor('username', 'email');
