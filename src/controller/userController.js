@@ -154,7 +154,7 @@ export const verifyOtp = async (req, res) => {
 
 export const signIn = async (req, res) => {
   try {
-    const { username, password } = req.body
+    const { username, email, password } = req.body
 
     const { error, value } = signInSchema.validate(req.body, { abortEarly: false });
 
@@ -169,7 +169,7 @@ export const signIn = async (req, res) => {
     const { data: user } = await supabase
       .from('users')
       .select('*')
-      .or(`username.eq.${username}, email.eq.${username}`)
+      .or(`username.eq.${username}, email.eq.${email}`)
 
     if (!user) {
       return new Error('Silakan Masukkan Email atau username yang benar')

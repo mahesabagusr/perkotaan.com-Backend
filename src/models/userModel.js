@@ -30,10 +30,16 @@ export const userSchema = joi.object().keys({
 })
 
 export const signInSchema = joi.object({
-  username: joi.string().allow('').messages({
-    'string.empty': 'Harap isi Username atau Email',
+  username: joi.string().messages({
+    'string.empty': 'Harap isi Username'
   }),
-  password: joi.string().required().messages({
+  email: joi.string().email().messages({
+    'string.empty': 'Harap isi Email',
+
+  }),
+  password: joi.string().min(6).regex(regex).required().messages({
     'string.empty': 'Harap isi Password',
-  }),
+    'string.min': 'Harap isi password minimal 6 karakter ',
+    'string.pattern.base': 'Harap Minimal satu huruf besar'
+  })
 })
