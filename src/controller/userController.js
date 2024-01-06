@@ -154,14 +154,14 @@ export const verifyOtp = async (req, res) => {
 
 export const signIn = async (req, res) => {
   try {
-    const { email, username, password } = req.body
+    const { username, password } = req.body
 
     const { error, value } = signInSchema.validate(req.body, { abortEarly: false });
 
     if (error) {
       const response = res.status(400).json({
         status: 'fail',
-        message: `Verifikasi Gagal, ${error.message}`
+        message: `Login Gagal, ${error.message}`
       })
       return response
     };
@@ -169,13 +169,11 @@ export const signIn = async (req, res) => {
     const { data: user } = await supabase
       .from('users')
       .select('*')
-      .or(`username.eq.${username}, email.eq.${email}`)
+      .or(`username.eq.${username}, email.eq.${username}`)
 
     if (!user) {
-      return new Error('Silakan Masukkan Email atau Password yang benar')
+      return new Error('Silakan Masukkan Email atau username yang benar')
     }
-
-    console.log(user[0].id)
 
     const isValid = bcrypt.compare(password, user[0].password)
 

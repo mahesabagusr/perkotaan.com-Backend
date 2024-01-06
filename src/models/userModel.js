@@ -33,11 +33,7 @@ export const signInSchema = joi.object({
   username: joi.string().allow('').messages({
     'string.empty': 'Harap isi Username atau Email',
   }),
-  email: joi.string().email().allow('').messages({
-    'string.empty': 'Harap isi Username atau Email',
-    'string.email': 'Email tidak valid',
-  }),
   password: joi.string().required().messages({
     'string.empty': 'Harap isi Password',
   }),
-}).xor('username', 'email');
+})
