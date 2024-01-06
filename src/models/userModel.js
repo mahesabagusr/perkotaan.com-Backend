@@ -21,6 +21,11 @@ export const userSchema = joi.object().keys({
     'string.empty': 'Harap isi Password',
     'string.min': 'Harap isi password minimal 6 karakter ',
     'string.pattern.base': 'Harap Minimal satu huruf besar'
+  }),
+  confirmPassword: joi.string().min(6).regex(regex).required().messages({
+    'string.empty': 'Harap isi confirm Password',
+    'string.min': 'Harap isi confirm password minimal 6 karakter ',
+    'string.pattern.base': 'Harap Minimal satu huruf besar'
   })
 })
 

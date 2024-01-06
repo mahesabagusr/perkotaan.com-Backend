@@ -18,7 +18,7 @@ export const signUp = async (req, res) => {
       return response
     };
 
-    const { email, username, password, confrimPassword, firstName, lastName, age } = req.body
+    const { email, username, password, confirmPassword, firstName, lastName, age } = req.body
 
     const { data: existingUser } = await supabase
       .from('users')
@@ -34,7 +34,7 @@ export const signUp = async (req, res) => {
       })
     }
 
-    if (password !== confrimPassword) {
+    if (password !== confirmPassword) {
       res.status(400).json({
         status: 'fail',
         message: 'Password dan Confirm Password tidak cocok'
@@ -53,7 +53,7 @@ export const signUp = async (req, res) => {
 
     const { error: err } = await supabase
       .from('users')
-      .insert({ username: username, email: email, password: hashPassword, first_name: firstName, last_name: lastName, signature: signature, status: true })
+      .insert({ username: username, email: email, password: hashPassword, first_name: firstName, last_name: lastName, age: age, signature: signature, status: true })
       .select()
 
     if (err) {
