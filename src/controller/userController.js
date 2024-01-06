@@ -18,7 +18,7 @@ export const signUp = async (req, res) => {
       return response
     };
 
-    const { email, username, password, firstName, lastName, age } = req.body
+    const { email, username, password, confrimPassword, firstName, lastName, age } = req.body
 
     const { data: existingUser } = await supabase
       .from('users')
@@ -28,33 +28,47 @@ export const signUp = async (req, res) => {
     console.log(existingUser);
 
     if (existingUser.length > 0) {
-      throw new Error('Email already exists');
+      res.status(400).json({
+        status: 'fail',
+        message: 'Email sudah Terdaftar'
+      })
     }
 
-    const { otp, expirationTime } = await generateOtp()
-    const success = await sendMail(email, otp)
-
-    if (!success) {
-      throw new Error('Register Gagal, Kode verifikasi gagal dikirim');
+    if (password !== confrimPassword) {
+      res.status(400).json({
+        status: 'fail',
+        message: 'Password dan Confirm Password tidak cocok'
+      })
     }
+
+    // const { otp, expirationTime } = await generateOtp()
+    // const success = await sendMail(email, otp)
+
+    // if (!success) {
+    //   throw new Error('Register Gagal, Kode verifikasi gagal dikirim');
+    // }
 
     const signature = nanoid(4);
     const hashPassword = await bcrypt.hash(password, 10);
-    const verified = false;
 
-    store.set('data', {
-      username: username, firstName: firstName, lastName: lastName, age: age, email: email, password: hashPassword, signature: signature, verified: verified, otp: otp, expirationTime: expirationTime
-    })
+    const { error: err } = await supabase
+      .from('users')
+      .insert({ username: username, email: email, password: hashPassword, first_name: firstName, last_name: lastName, signature: signature, status: true })
+      .select()
+
+    if (err) {
+      throw new Error(err)
+    }
 
     const response = res.status(200).json({
       status: 'success',
-      message: 'Register Berhasil, Cek Email Kamu untuk melihat verifikasi kode OTP kamu',
+      message: 'Register Berhasil, Silakan Masuk ke Menu Login',
     })
 
     return response
 
   } catch (err) {
-    res.json({
+    res.status(500).json({
       status: 'fail',
       message: err.message
     })
