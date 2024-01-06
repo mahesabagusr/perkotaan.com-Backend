@@ -205,6 +205,41 @@ export const signIn = async (req, res) => {
   }
 }
 
+export const logOut = async (req, res) => {
+  try {
+
+    const { refreshToken } = req.cookies;
+
+    if (!refreshToken) return res.status(204);
+
+    const { data: token } = await supabase
+      .from('users')
+      .select('*')
+      .eq('refresh_token', refreshToken);
+
+    if (!token[0]) return res.status(204);
+
+    await supabase
+      .from('users')
+      .update({ refresh_token: null })
+      .eq('id', user[0].id)
+
+    res.clearCookie('refreshToken')
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'Berhasil Logout'
+    });
+
+  } catch (err) {
+    return res.status(200).json({
+      status: 'success',
+      message: `Gagal Logout, ${err.message}`
+    });
+  }
+
+}
+
 export const getUser = async (req, res) => {
   try {
     const { data } = await supabase.auth.getUser()
