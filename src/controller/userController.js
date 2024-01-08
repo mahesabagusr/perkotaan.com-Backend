@@ -1,9 +1,9 @@
 import bcrypt from 'bcrypt'
 import store from 'store'
 import { nanoid } from 'nanoid'
-import supabase from '../config/supabaseClient.js';
+import supabase from '../config/supabaseConfig.js';
 import { userSchema, otpSchema, signInSchema } from '../models/model.js';
-import { sendMail, generateOtp } from '../services/sendEmail.js';
+import { sendMail, generateOtp } from '../services/sendEmailService.js';
 import { createToken, createRefreshToken } from '../middlewares/jwt.js';
 
 export const signUp = async (req, res) => {
