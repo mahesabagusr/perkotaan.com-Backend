@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid'
 import supabase from '../config/supabaseConfig.js';
 import { fileTypeFromStream } from 'file-type';
 
-export const imageUpload = async (image) => {
+export const imageUpload = async (folder, bucket, image) => {
   try {
 
     const getFileExtension = filename => filename.includes('.') ? filename.split('.').pop() : null;
@@ -12,8 +12,8 @@ export const imageUpload = async (image) => {
 
     const { data: imageData, error } = await supabase
       .storage
-      .from('project_images')
-      .upload(`public/${imagePath}`, image.data, {
+      .from(bucket)
+      .upload(`${folder}/${imagePath}`, image.data, {
         upsert: false,
         request: {
           duplex: true,
@@ -26,8 +26,8 @@ export const imageUpload = async (image) => {
 
     const { data: imageUrl } = supabase
       .storage
-      .from('project_images')
-      .getPublicUrl(`public/${imagePath}`)
+      .from(bucket)
+      .getPublicUrl(`${folder}/${imagePath}`)
 
     console.log(imageUrl)
 
@@ -37,3 +37,12 @@ export const imageUpload = async (image) => {
     // throw new Error(err.message);
   }
 };
+
+export const getImageUrl = async (folder, bucket, image) => {
+  const { data: imageUrl } = supabase
+    .storage
+    .from(bucket)
+    .getPublicUrl(`${folder}/${image}`)
+
+  return imageUrl.publicUrl;
+}

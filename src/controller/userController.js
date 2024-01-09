@@ -5,6 +5,7 @@ import supabase from '../config/supabaseConfig.js';
 import { userSchema, otpSchema, signInSchema } from '../models/model.js';
 import { sendMail, generateOtp } from '../services/sendEmailService.js';
 import { createToken, createRefreshToken } from '../middlewares/jwt.js';
+import { imageUpload, getImageUrl } from '../services/projectService.js';
 
 export const signUp = async (req, res) => {
   try {
@@ -24,8 +25,6 @@ export const signUp = async (req, res) => {
       .from('users')
       .select('id')
       .eq('email', email);
-
-    console.log(existingUser);
 
     if (existingUser.length > 0) {
       res.status(400).json({
@@ -47,13 +46,13 @@ export const signUp = async (req, res) => {
     // if (!success) {
     //   throw new Error('Register Gagal, Kode verifikasi gagal dikirim');
     // }
-
+    const imageUrl = await getImageUrl('public', 'user_images', 'pp.jpg')
     const signature = nanoid(4);
     const hashPassword = await bcrypt.hash(password, 10);
-
+    console.log(imageUrl)
     const { error: err } = await supabase
       .from('users')
-      .insert({ username: username, email: email, password: hashPassword, first_name: firstName, last_name: lastName, age: age, signature: signature, status: true })
+      .insert({ username: username, email: email, password: hashPassword, first_name: firstName, last_name: lastName, age: age, signature: signature, status: true, image_url: imageUrl })
       .select()
 
     if (err) {
@@ -233,7 +232,7 @@ export const logOut = async (req, res) => {
 
   } catch (err) {
     return res.status(200).json({
-      status: 'success',
+      status: 'fail',
       message: `Gagal Logout, ${err.message}`
     });
   }

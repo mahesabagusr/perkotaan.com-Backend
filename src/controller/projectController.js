@@ -67,9 +67,9 @@ export const getProvince = async (req, res) => {
   try {
     const { data: provinces } = await supabase
       .from('province')
-      .select('name')
+      .select('*')
 
-    const spreadProvince = provinces.map(c => c.name)
+    const spreadProvince = await provinces.map(c => { return { id: c.id, name: c.name } })
 
     res.status(200).json({
       status: 'success',
@@ -105,6 +105,31 @@ export const getCity = async (req, res) => {
   }
 };
 
+export const getCityByProvinceId = async (req, res) => {
+  try {
+    const { id } = req.params
+
+    const { data: city, error } = await supabase
+      .from('city')
+      .select('*')
+      .eq('province_id', id)
+
+    const spreadCity = city.map(c => { return { id: c.id, name: c.name } })
+
+    res.status(200).json({
+      status: 'success',
+      data: spreadCity
+    })
+
+  } catch (err) {
+    return res.status(500).json({
+      status: 'error',
+      error: `Internal Server Error: ${err.message}`
+    });
+  }
+
+}
+
 export const getCityById = async (req, res) => {
   try {
     const { id } = req.params
@@ -114,9 +139,11 @@ export const getCityById = async (req, res) => {
       .select('name')
       .eq('id', id)
 
+    const spreadCity = city.map(c => { return { id: c.id, name: c.name } })
+
     res.status(200).json({
       status: 'success',
-      data: city
+      data: spreadCity
     })
 
   } catch (err) {
@@ -199,7 +226,7 @@ export const postProject = async (req, res) => {
     const { projectName, description, budget, targetTime, startTime, cityId } = req.body
 
 
-    const imageUrl = await imageUpload(image)
+    const imageUrl = await imageUpload('public', 'project_image', image)
 
     const { data: project, error: err } = await supabase
       .from('project')

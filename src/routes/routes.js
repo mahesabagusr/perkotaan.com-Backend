@@ -1,6 +1,6 @@
 import express from 'express';
 import { getUser, signIn, signUp, verifyOtp, logOut } from '../controller/userController.js';
-import { getProjectByUid, getProjectWithPagination, postProject, searchCity, searchProvince, getProvince, getCity, getCityById } from '../controller/projectController.js'
+import { getProjectByUid, getProjectWithPagination, postProject, searchCity, searchProvince, getProvince, getCity, getCityById, getCityByProvinceId } from '../controller/projectController.js'
 import { verifyToken } from '../middlewares/jwt.js';
 import { imageUpload } from '../services/projectService.js';
 
@@ -23,6 +23,7 @@ router.post('/city/search', searchCity)
 router.get('/province/get', getProvince)
 router.get('/city/get', getCity)
 router.get('/city/get/:id', getCityById)
+router.get('/city/get/province/:id', getCityByProvinceId)
 
 //Project Routes
 router.post('/project/upload', postProject)
