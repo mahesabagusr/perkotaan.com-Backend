@@ -211,7 +211,7 @@ export const logOut = async (req, res) => {
 
     if (!refreshToken) return res.status(204);
 
-    const { data: token } = await supabase
+    const { data: user } = await supabase
       .from('users')
       .select('*')
       .eq('refresh_token', refreshToken);

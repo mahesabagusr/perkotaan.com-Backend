@@ -255,3 +255,32 @@ export const postProject = async (req, res) => {
   }
 
 }
+
+export const getProjectByCityId = async (req, res) => {
+  try {
+    const { id } = req.body
+
+    const { data: project, error } = await supabase
+      .from('project')
+      .select('*')
+      .eq('city_id', id)
+
+    if (error) {
+      res.status(400).json({
+        status: 'error',
+        message: error.message
+      });
+
+      res.status(200).json({
+        status: 'success',
+        message: project
+      })
+
+    }
+  } catch (err) {
+
+  }
+
+
+
+}
