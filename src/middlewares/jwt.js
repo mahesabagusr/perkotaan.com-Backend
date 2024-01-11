@@ -6,11 +6,11 @@ export const createToken = (data) => {
   const accessToken = jwt.sign(
     { id: data.id, name: data.name, email: data.email, signature: data.signature },
     process.env.ACCESS_TOKEN_SECRET,
-    { expiresIn: '20s' }
+    { expiresIn: '1d' }
   );
 
   return { accessToken };
-}
+} 
 
 export const createRefreshToken = (data) => {
 

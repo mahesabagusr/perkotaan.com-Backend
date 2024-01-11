@@ -202,9 +202,25 @@ export const getProjectWithPagination = async (req, res) => {
 
 }
 
+export const getAllProjects = async (req, res) => {
+  try {
+    const { data: projects, error: err } = await supabase
+      .from('project')
+      .select('*')
+
+    if (err) {
+      return res.status(500).json({ status: 'error', error: err.message });
+    }
+
+    return res.json({ status: 'success', data: projects });
+  } catch {
+    return res.status(500).json({ status: 'error', error: error.message });
+  }
+
+}
+
 export const postProject = async (req, res) => {
   try {
-
     if (!req.files.image) {
       res.status(422).json({
         status: 'fail',

@@ -1,7 +1,8 @@
 import express from 'express';
 import { getUser, signIn, signUp, verifyOtp, logOut } from '../controller/userController.js';
-import { getProjectByUid, getProjectWithPagination, postProject, searchCity, searchProvince, getProvince, getCity, getCityById, getCityByProvinceId } from '../controller/projectController.js'
+import { getProjectByUid, getProjectWithPagination,getAllProjects, postProject, searchCity, searchProvince, getProvince, getCity, getCityById, getCityByProvinceId } from '../controller/projectController.js'
 import { verifyToken } from '../middlewares/jwt.js';
+import { refreshToken } from '../controller/refreshToken.js';
 import { imageUpload } from '../services/projectService.js';
 
 const router = express.Router();
@@ -16,6 +17,7 @@ router.post('/signup', signUp)
 router.post('/signin', signIn)
 router.post('/verifyotp', verifyOtp)
 router.post('/logout', logOut)
+router.post('/token', refreshToken)
 
 // Province Routes
 router.post('/province/search', searchProvince)
@@ -27,7 +29,8 @@ router.get('/city/get/province/:id', getCityByProvinceId)
 
 //Project Routes
 router.post('/project/upload', postProject)
-router.get('/project/get/:page/:pageSize', verifyToken, getProjectWithPagination)
+router.get('/project/get/:page/:pageSize', getProjectWithPagination)
+router.get('/project/get', getAllProjects)
 router.get('/project/getuid/:uid', getProjectByUid)
 
 export default router;

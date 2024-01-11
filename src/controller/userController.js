@@ -21,15 +21,27 @@ export const signUp = async (req, res) => {
 
     const { email, username, password, confirmPassword, firstName, lastName, age } = req.body
 
-    const { data: existingUser } = await supabase
+    const { data: existingEmail } = await supabase
       .from('users')
       .select('id')
       .eq('email', email);
 
-    if (existingUser.length > 0) {
+    if (existingEmail.length > 0) {
       res.status(400).json({
         status: 'fail',
         message: 'Email sudah Terdaftar'
+      })
+    }
+
+    const { data: existingUser } = await supabase
+      .from('users')
+      .select('id')
+      .eq('username', username);
+
+    if (existingUser.length > 0) {
+      res.status(400).json({
+        status: 'fail',
+        message: 'Username sudah Terdaftar'
       })
     }
 
