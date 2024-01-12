@@ -27,7 +27,7 @@ export const signUp = async (req, res) => {
       .eq('email', email);
 
     if (existingEmail.length > 0) {
-      res.status(400).json({
+      return res.status(400).json({
         status: 'fail',
         message: 'Email sudah Terdaftar'
       })
@@ -39,14 +39,14 @@ export const signUp = async (req, res) => {
       .eq('username', username);
 
     if (existingUser.length > 0) {
-      res.status(400).json({
+      return res.status(400).json({
         status: 'fail',
         message: 'Username sudah Terdaftar'
       })
     }
 
     if (password !== confirmPassword) {
-      res.status(400).json({
+      return res.status(400).json({
         status: 'fail',
         message: 'Password dan Confirm Password tidak cocok'
       })
@@ -61,14 +61,17 @@ export const signUp = async (req, res) => {
     const imageUrl = await getImageUrl('public', 'user_images', 'pp.jpg')
     const signature = nanoid(4);
     const hashPassword = await bcrypt.hash(password, 10);
-    console.log(imageUrl)
+
     const { error: err } = await supabase
       .from('users')
       .insert({ username: username, email: email, password: hashPassword, first_name: firstName, last_name: lastName, age: age, signature: signature, status: true, image_url: imageUrl })
       .select()
 
     if (err) {
-      throw new Error(err)
+      return res.status(400).json({
+        status: 'fail',
+        message: err
+      })
     }
 
     const response = res.status(200).json({
@@ -79,10 +82,10 @@ export const signUp = async (req, res) => {
     return response
 
   } catch (err) {
-    res.status(500).json({
-      status: 'fail',
-      message: err.message
-    })
+    // res.status(500).json({
+    //   status: 'fail',
+    //   message: err.message
+    // })
   }
 }
 

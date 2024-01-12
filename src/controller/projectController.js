@@ -4,6 +4,7 @@ import { nanoid } from 'nanoid'
 import supabase from '../config/supabaseConfig.js';
 import { uploadProjectSchema } from '../models/model.js';
 import { imageUpload } from '../services/projectService.js';
+import { format } from 'mysql2';
 
 export const searchProvince = async (req, res) => {
   try {
@@ -88,9 +89,9 @@ export const getCity = async (req, res) => {
   try {
     const { data: city } = await supabase
       .from('city')
-      .select('name')
+      .select('*')
 
-    const spreadCity = city.map(c => c.name)
+    const spreadCity = city.map(c => { return { id: c.id, name: c.name } })
 
     res.status(200).json({
       status: 'success',
@@ -136,7 +137,7 @@ export const getCityById = async (req, res) => {
 
     const { data: city } = await supabase
       .from('city')
-      .select('name')
+      .select('*')
       .eq('id', id)
 
     const spreadCity = city.map(c => { return { id: c.id, name: c.name } })
@@ -154,26 +155,36 @@ export const getCityById = async (req, res) => {
   }
 }
 
-export const getProjectByUid = async (req, res) => {
+export const getProjectById = async (req, res) => {
   try {
-    const { uid } = req.params
+    const { id } = req.params
 
     const { data: project, error } = await supabase
       .from('project')
-      .select(`  project_name, description,budget,target_time,start_time,image_url ,city (name, province(name))`)
-      .eq('uid', uid)
+      .select(`project_name, description,budget,target_time,start_time,image_url ,city (name, province(name))`)
+      .eq('id', id)
+
+    if (error) {
+      return res.status(500).json({ status: 'error', error: error.message });
+    }
+
+    const formattedData = project.map(project => ({
+      id: project.id,
+      project_name: project.project_name,
+      description: project.description,
+      budget: project.budget,
+      target_time: project.target_time,
+      start_time: project.start_time,
+      image_url: project.image_url,
+      city: project.city.name,
+      province: project.city.province.name
+    }));
 
     return res.json({
-      project_name: project[0].project_name,
-      description: project[0].description,
-      budget: project[0].budget,
-      target_time: project[0].target_time,
-      start_time: project[0].start_time,
-      image_url: project[0].image_url,
-      city: project[0].city.name,
-      province: project[0].city.province.name
-    }
-    )
+      status: 'success',
+      data: formattedData
+    })
+
   } catch (error) {
     return res.status(500).json({ status: 'error', error: error.message });
   }
@@ -186,7 +197,7 @@ export const getProjectWithPagination = async (req, res) => {
 
     const { data: projects, error: err } = await supabase
       .from('project')
-      .select('*')
+      .select('project_name, description,budget,target_time,start_time,image_url ,city(name, province(name))')
       .range(offset, pageSize - 1)
       .order('id', { ascending: true });
 
@@ -194,7 +205,20 @@ export const getProjectWithPagination = async (req, res) => {
       return res.status(500).json({ status: 'error', error: err.message });
     }
 
-    return res.json({ status: 'success', data: projects });
+    const formattedData = projects.map(project => ({
+      project_name: project.project_name,
+      description: project.description,
+      budget: project.budget,
+      target_time: project.target_time,
+      start_time: project.start_time,
+      image_url: project.image_url,
+      city: project.city.name,
+      province: project.city.province.name
+    }));
+
+    return res.json({
+      status: 'success', data: formattedData
+    });
 
   } catch (error) {
     return res.status(500).json({ status: 'error', error: error.message });
@@ -206,14 +230,29 @@ export const getAllProjects = async (req, res) => {
   try {
     const { data: projects, error: err } = await supabase
       .from('project')
-      .select('*')
+      .select('project_name, description,budget,target_time,start_time,image_url ,city (name, province(name))')
 
     if (err) {
       return res.status(500).json({ status: 'error', error: err.message });
     }
 
-    return res.json({ status: 'success', data: projects });
-  } catch {
+    const formattedData = projects.map(project => ({
+      project_name: project.project_name,
+      description: project.description,
+      budget: project.budget,
+      target_time: project.target_time,
+      start_time: project.start_time,
+      image_url: project.image_url,
+      city: project.city.name,
+      province: project.city.province.name
+    }));
+
+    return res.json({
+      status: 'success',
+      data: formattedData,
+
+    });
+  } catch (error) {
     return res.status(500).json({ status: 'error', error: error.message });
   }
 
@@ -271,32 +310,36 @@ export const postProject = async (req, res) => {
   }
 
 }
-
 export const getProjectByCityId = async (req, res) => {
   try {
-    const { id } = req.body
-
-    const { data: project, error } = await supabase
+    const { id } = req.params
+    const { data: projects, error: err } = await supabase
       .from('project')
-      .select('*')
+      .select('project_name, description,budget,target_time,start_time,image_url ,city (name, province(name))')
       .eq('city_id', id)
 
-    if (error) {
-      res.status(400).json({
-        status: 'error',
-        message: error.message
-      });
-
-      res.status(200).json({
-        status: 'success',
-        message: project
-      })
-
+    if (err) {
+      return res.status(500).json({ status: 'error', error: err.message });
     }
-  } catch (err) {
 
+    const formattedData = projects.map(project => ({
+      project_name: project.project_name,
+      description: project.description,
+      budget: project.budget,
+      target_time: project.target_time,
+      start_time: project.start_time,
+      image_url: project.image_url,
+      city: project.city.name,
+      province: project.city.province.name
+    }));
+
+    return res.json({
+      status: 'success',
+      data: formattedData,
+
+    });
+  } catch (error) {
+    return res.status(500).json({ status: 'error', error: error.message });
   }
-
-
 
 }
