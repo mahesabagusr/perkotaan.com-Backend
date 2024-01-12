@@ -10,9 +10,10 @@ const router = express.Router();
 router.get('/', function (req, res) {
   res.status(200).json({ status: 'OK' });
 });
-router.get('/getuser', getUser)
+
 
 // User Routes
+router.get('/user/:id', getUser)
 router.post('/signup', signUp)
 router.post('/signin', signIn)
 router.post('/verifyotp', verifyOtp)

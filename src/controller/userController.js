@@ -256,11 +256,18 @@ export const logOut = async (req, res) => {
 
 export const getUser = async (req, res) => {
   try {
-    const { data } = await supabase.auth.getUser()
+    const { id } = req.params
+    const { data: users } = await supabase
+      .from('users')
+      .select('*')
+      .eq('id', id)
 
-    res.status(200).json({ data })
+    res.status(200).json({ user: users })
   } catch (err) {
-
+    return res.status(200).json({
+      status: 'fail',
+      message: `Gagal get User, ${err.message}`
+    });
   }
 
 }
