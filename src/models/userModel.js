@@ -39,5 +39,7 @@ export const signInSchema = joi.object({
   }),
   password: joi.string().required().messages({
     'string.empty': 'Harap isi Password',
+    // 'string.min': 'Harap isi password minimal 6 karakter ',
+    // 'string.pattern.base': 'Harap Minimal satu huruf besar'
   })
 })

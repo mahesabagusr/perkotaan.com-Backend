@@ -174,7 +174,7 @@ export const signIn = async (req, res) => {
   try {
     const { username, email, password } = req.body
 
-    const { error, value } = signInSchema.validate(req.body, { abortEarly: false });
+    const { error, value } = signInSchema.validate(req.body, { abortEarly: true });
 
     if (error) {
       const response = res.status(400).json({
@@ -189,15 +189,15 @@ export const signIn = async (req, res) => {
       .select('*')
       .or(`username.eq.${username}, email.eq.${email}`)
 
-    if (!user) {
+    if (!user || user.length === 0) {
       return res.status(404).json({
         status: 'fail',
         message: 'Silakan Masukkan Email atau username yang benar'
       })
     }
 
-    const isValid = bcrypt.compare(password, user[0].password)
-
+    const isValid = await bcrypt.compare(password, user[0].password)
+    
     if (!isValid) {
       return res.status(404).json({
         status: 'fail',
@@ -212,7 +212,6 @@ export const signIn = async (req, res) => {
       .from('users')
       .update({ refresh_token: refreshToken })
       .eq('id', user[0].id)
-    // res.json({ status })
 
     res.cookie('refreshToken', refreshToken, {
       httOnly: true,
