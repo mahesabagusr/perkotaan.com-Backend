@@ -12,7 +12,7 @@ config({ path: '.env' })
 
 
 const app = express();
-app.use(cors())
+app.use(cors({ origin: ['http://localhost:3000', 'https://perkotaan.vercel.app/'] }))
 app.use(fileUpload())
 app.use(cookieParser())
 app.use(express.json());
