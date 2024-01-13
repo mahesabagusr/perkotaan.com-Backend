@@ -149,7 +149,11 @@ export const verifyOtp = async (req, res) => {
       .select()
 
     if (err) {
-      throw new Error(err)
+      const response = res.status(400).json({
+        status: 'fail',
+        message: 'Verifikasi Gagal',
+      });
+      return response
     }
 
     const response = res.status(200).json({
@@ -186,13 +190,19 @@ export const signIn = async (req, res) => {
       .or(`username.eq.${username}, email.eq.${email}`)
 
     if (!user) {
-      return new Error('Silakan Masukkan Email atau username yang benar')
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Silakan Masukkan Email atau username yang benar'
+      })
     }
 
     const isValid = bcrypt.compare(password, user[0].password)
 
     if (!isValid) {
-      return new Error('Password salah')
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Silakan Masukkan Password yang benar'
+      })
     }
 
     const { accessToken } = createToken({ id: user[0].id, name: user[0].name, email: user[0].email, signature: user[0].signature })
