@@ -206,6 +206,7 @@ export const getProjectWithPagination = async (req, res) => {
     }
 
     const formattedData = projects.map(project => ({
+      id: project.id,
       project_name: project.project_name,
       description: project.description,
       budget: project.budget,
@@ -237,6 +238,7 @@ export const getAllProjects = async (req, res) => {
     }
 
     const formattedData = projects.map(project => ({
+      id: project.id,
       project_name: project.project_name,
       description: project.description,
       budget: project.budget,

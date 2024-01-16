@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer'; 
 import crypto from 'crypto';
 
 export const generateOtp = () => {
