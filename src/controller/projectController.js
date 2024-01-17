@@ -161,7 +161,7 @@ export const getProjectById = async (req, res) => {
 
     const { data: project, error } = await supabase
       .from('project')
-      .select(`project_name, description,budget,target_time,start_time,image_url ,city (name, province(name))`)
+      .select(`id,project_name, description,budget,target_time,start_time,image_url ,city (name, province(name))`)
       .eq('id', id)
 
     if (error) {
@@ -197,7 +197,7 @@ export const getProjectWithPagination = async (req, res) => {
 
     const { data: projects, error: err } = await supabase
       .from('project')
-      .select('project_name, description,budget,target_time,start_time,image_url ,city(name, province(name))')
+      .select('id,project_name, description,budget,target_time,start_time,image_url ,city(name, province(name))')
       .range(offset, pageSize - 1)
       .order('id', { ascending: true });
 
@@ -231,7 +231,7 @@ export const getAllProjects = async (req, res) => {
   try {
     const { data: projects, error: err } = await supabase
       .from('project')
-      .select('project_name, description,budget,target_time,start_time,image_url ,city (name, province(name))')
+      .select('id,project_name, description,budget,target_time,start_time,image_url ,city (name, province(name))')
 
     if (err) {
       return res.status(500).json({ status: 'error', error: err.message });
@@ -317,7 +317,7 @@ export const getProjectByCityId = async (req, res) => {
     const { id } = req.params
     const { data: projects, error: err } = await supabase
       .from('project')
-      .select('project_name, description,budget,target_time,start_time,image_url ,city (name, province(name))')
+      .select('id,project_name, description,budget,target_time,start_time,image_url ,city (name, province(name))')
       .eq('city_id', id)
 
     if (err) {
@@ -325,6 +325,7 @@ export const getProjectByCityId = async (req, res) => {
     }
 
     const formattedData = projects.map(project => ({
+      id: project.id,
       project_name: project.project_name,
       description: project.description,
       budget: project.budget,
