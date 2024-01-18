@@ -4,7 +4,6 @@ import { nanoid } from 'nanoid'
 import supabase from '../config/supabaseConfig.js';
 import { uploadProjectSchema } from '../models/model.js';
 import { imageUpload } from '../services/projectService.js';
-import { format } from 'mysql2';
 
 export const searchProvince = async (req, res) => {
   try {
@@ -225,6 +224,39 @@ export const getProjectWithPagination = async (req, res) => {
     return res.status(500).json({ status: 'error', error: error.message });
   }
 
+}
+
+export const searchProjects = async (req, res) => {
+  try {
+    const searchTerm = req.body.searchTerm.toLowerCase(); // Convert search term to lowercase
+
+    const { data, error } = await supabase
+      .from('project')
+      .select('id, project_name, description, budget, target_time, start_time, image_url, city (name, province(name))')
+      .ilike('project_name', `%${searchTerm}%`); // Use ilike for case-insensitive search
+
+    const formattedData = data.map(project => ({
+      id: project.id,
+      project_name: project.project_name,
+      description: project.description,
+      budget: project.budget,
+      target_time: project.target_time,
+      start_time: project.start_time,
+      image_url: project.image_url,
+      city: project.city.name,
+      province: project.city.province.name
+    }));
+
+    const response = res.status(200).json({
+      status: 'success',
+      data: formattedData,
+    });
+
+    return response
+
+  } catch (error) {
+    return res.status(500).json({ status: 'error', error: error.message });
+  }
 }
 
 export const getAllProjects = async (req, res) => {
