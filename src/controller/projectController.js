@@ -228,12 +228,12 @@ export const getProjectWithPagination = async (req, res) => {
 
 export const searchProjects = async (req, res) => {
   try {
-    const searchTerm = req.body.searchTerm.toLowerCase(); // Convert search term to lowercase
+    const searchTerm = req.body.searchTerm.toLowerCase();
 
     const { data, error } = await supabase
       .from('project')
       .select('id, project_name, description, budget, target_time, start_time, image_url, city (name, province(name))')
-      .ilike('project_name', `%${searchTerm}%`); // Use ilike for case-insensitive search
+      .ilike('project_name', `%${searchTerm}%`);
 
     const formattedData = data.map(project => ({
       id: project.id,
@@ -314,8 +314,8 @@ export const postProject = async (req, res) => {
     const image = req.files.image;
     const { projectName, description, budget, targetTime, startTime, cityId } = req.body
 
-
-    const imageUrl = await imageUpload('public', 'project_image', image)
+  
+    const imageUrl = await imageUpload('public', 'project_images', image)
 
     const { data: project, error: err } = await supabase
       .from('project')

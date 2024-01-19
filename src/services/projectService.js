@@ -6,7 +6,8 @@ import { fileTypeFromStream } from 'file-type';
 
 export const imageUpload = async (folder, bucket, image) => {
   try {
-
+    console.log(image.data)
+    console.log(bucket)
     const getFileExtension = filename => filename.includes('.') ? filename.split('.').pop() : null;
     const imagePath = `project_image${nanoid(10)}.${getFileExtension(image.name)}`
 
