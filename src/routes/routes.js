@@ -4,6 +4,7 @@ import { getProjectById, getProjectWithPagination, getAllProjects, postProject, 
 import { verifyToken } from '../middlewares/jwt.js';
 import { refreshToken } from '../controller/refreshToken.js';
 import { imageUpload } from '../services/projectService.js';
+import { getCommentByProjectId, postComment } from '../controller/commentController.js';
 
 const router = express.Router();
 
@@ -35,5 +36,9 @@ router.post('/project/city/search', searchProjects)
 router.get('/project/get', getAllProjects)
 router.get('/project/get/:id', getProjectById)
 router.get('/project/city/:id', getProjectByCityId)
+
+//Comment Routes
+router.post('/comment/post/:projectId', postComment)
+router.get('/comment/get/:projectId', getCommentByProjectId)
 
 export default router;

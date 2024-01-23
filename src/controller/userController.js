@@ -197,7 +197,7 @@ export const signIn = async (req, res) => {
     }
 
     const isValid = await bcrypt.compare(password, user[0].password)
-    
+
     if (!isValid) {
       return res.status(404).json({
         status: 'fail',
@@ -278,5 +278,5 @@ export const getUser = async (req, res) => {
       message: `Gagal get User, ${err.message}`
     });
   }
-
 }
+

@@ -1,6 +1,3 @@
-import bcrypt from 'bcrypt'
-import store from 'store'
-import { nanoid } from 'nanoid'
 import supabase from '../config/supabaseConfig.js';
 import { uploadProjectSchema } from '../models/model.js';
 import { imageUpload } from '../services/projectService.js';
