@@ -293,7 +293,7 @@ export const getAllProjects = async (req, res) => {
 
 export const postProject = async (req, res) => {
   try {
-    if (!req.files.image) {
+    if (!req.files.image || !req.files.proposal) {
       res.status(422).json({
         status: 'fail',
         message: 'Image harus di upload'
@@ -310,15 +310,15 @@ export const postProject = async (req, res) => {
       return response
     }
 
-    const image = req.files.image;
+    const { image, report } = req.files;
     const { projectName, description, budget, targetTime, startTime, cityId } = req.body
 
-
     const imageUrl = await imageUpload('public', 'project_images', image)
+    const reportUrl = await imageUpload('public', 'project_report', report)
 
     const { data: project, error: err } = await supabase
       .from('project')
-      .insert({ project_name: projectName, description: description, budget: budget, target_time: targetTime, start_time: startTime, image_url: imageUrl, city_id: cityId })
+      .insert({ project_name: projectName, description: description, budget: budget, target_time: targetTime, start_time: startTime, image_url: imageUrl, report_url: reportUrl, city_id: cityId })
       .select()
 
     if (err) {
@@ -398,6 +398,7 @@ export const projectSubmission = async (req, res) => {
     }
 
     const { name, village, address, reason, } = req.body;
+    const { id } = req.params
     const { image, proposal } = req.files
 
     const imageUrl = await imageUpload('public', 'submission_images', image)
@@ -405,7 +406,7 @@ export const projectSubmission = async (req, res) => {
 
     const { data: submission, error: err } = await supabase
       .from('project_submission')
-      .insert({ name: name, village: village, address: address, reason: reason, image_url: imageUrl, proposal_url: proposalUrl })
+      .insert({ name: name, village: village, address: address, reason: reason, image_url: imageUrl, proposal_url: proposalUrl, user_id: id })
       .select()
 
     if (err) {

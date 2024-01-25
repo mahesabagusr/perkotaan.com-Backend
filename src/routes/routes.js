@@ -30,7 +30,7 @@ router.get('/city/get/province/:id', getCityByProvinceId)
 
 //Project Routes
 router.post('/project/upload', postProject)
-router.post('/project/submission', projectSubmission)
+router.post('/project/submission/:id', projectSubmission)
 router.get('/project/get/:page/:pageSize', getProjectWithPagination)
 router.post('/project/city/search', searchProjects)
 router.get('/project/get', getAllProjects)
