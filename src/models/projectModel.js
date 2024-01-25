@@ -23,3 +23,18 @@ export const uploadProjectSchema = joi.object().keys({
   //   'string.empty': 'Harap isi image'
   // })
 });
+
+export const submissionProjectSchema = joi.object().keys({
+  name: joi.string().required().messages({
+    'string.empty': 'Harap isi Nama Lengkap'
+  }),
+  village: joi.string().required().messages({
+    'string.empty': 'Harap isi RT/Kecamatan'
+  }),
+  address: joi.string().required().messages({
+    'string.empty': 'Harap isi Alamat'
+  }),
+  reason: joi.string().required().messages({
+    'string.empty': 'Harap isi Alasan Kamu'
+  }),
+})

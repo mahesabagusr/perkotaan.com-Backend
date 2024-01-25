@@ -1,5 +1,7 @@
+import fileUpload from 'express-fileupload';
 import supabase from '../config/supabaseConfig.js';
 import { uploadProjectSchema } from '../models/model.js';
+import { submissionProjectSchema } from '../models/projectModel.js';
 import { imageUpload } from '../services/projectService.js';
 
 export const searchProvince = async (req, res) => {
@@ -311,7 +313,7 @@ export const postProject = async (req, res) => {
     const image = req.files.image;
     const { projectName, description, budget, targetTime, startTime, cityId } = req.body
 
-  
+
     const imageUrl = await imageUpload('public', 'project_images', image)
 
     const { data: project, error: err } = await supabase
@@ -341,6 +343,7 @@ export const postProject = async (req, res) => {
   }
 
 }
+
 export const getProjectByCityId = async (req, res) => {
   try {
     const { id } = req.params
@@ -370,8 +373,56 @@ export const getProjectByCityId = async (req, res) => {
       data: formattedData,
 
     });
-  } catch (error) {
-    return res.status(500).json({ status: 'error', error: error.message });
+  } catch (err) {
+    return res.status(500).json({ status: 'error', error: err.message });
   }
+}
 
+export const projectSubmission = async (req, res) => {
+  try {
+    if (!req.files.image || !req.files.proposal) {
+      res.status(422).json({
+        status: 'fail',
+        message: 'Image atau Proposal harus di upload'
+      })
+    }
+
+    const { error, value } = submissionProjectSchema.validate(req.body, { abortEarly: false });
+
+    if (error) {
+      const response = res.status(400).json({
+        status: 'fail',
+        message: `Upload Gagal, ${error.message}`
+      })
+      return response
+    }
+
+    const { name, village, address, reason, } = req.body;
+    const { image, proposal } = req.files
+
+    const imageUrl = await imageUpload('public', 'submission_images', image)
+    const proposalUrl = await imageUpload('public', 'submission_proposal', proposal)
+
+    const { data: submission, error: err } = await supabase
+      .from('project_submission')
+      .insert({ name: name, village: village, address: address, reason: reason, image_url: imageUrl, proposal_url: proposalUrl })
+      .select()
+
+    if (err) {
+      const response = res.status(400).json({
+        status: 'fail',
+        message: `Upload Gagal, ${err.message}`
+      })
+      return response
+    }
+
+    return res.status(200).json({
+      status: 'success',
+      message: 'file uploaded successfully',
+      data: submission
+    })
+
+  } catch (err) {
+    return res.status(500).json({ status: 'error', error: err.message });
+  }
 }
