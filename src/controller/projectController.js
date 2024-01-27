@@ -174,7 +174,7 @@ export const getProjectById = async (req, res) => {
       target_time: project.target_time,
       start_time: project.start_time,
       image_url: project.image_url,
-      image_url: project.project_url,
+      project_url: project.project_url,
       city: project.city.name,
       province: project.city.province.name
     }));
