@@ -427,3 +427,33 @@ export const projectSubmission = async (req, res) => {
     return res.status(500).json({ status: 'error', error: err.message });
   }
 }
+
+export const porjectSubmissionHistory = async (req, res) => {
+  try {
+
+    const { id } = req.params
+
+    const { data, error } = await supabase
+      .from('project_submission')
+      .select('name,village,address,reason,image_url,proposal_url')
+      .eq('user_id', id)
+
+    if (error) {
+      const response = res.status(400).json({
+        status: 'fail',
+        message: `Get Gagal, ${error.message}`
+      })
+      return response
+    }
+
+    return res.status(200).json({
+      status: 'success',
+      data: data
+    })
+
+  } catch (err) {
+    return res.status(500).json({ status: 'error', error: err.message });
+  }
+
+
+}
