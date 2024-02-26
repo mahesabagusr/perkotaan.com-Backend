@@ -61,10 +61,11 @@ export const signUp = async (req, res) => {
     const imageUrl = await getImageUrl('public', 'user_images', 'pp.jpg')
     const signature = nanoid(4);
     const hashPassword = await bcrypt.hash(password, 10);
+    const role = 'user';
 
     const { error: err } = await supabase
       .from('users')
-      .insert({ username: username, email: email, password: hashPassword, first_name: firstName, last_name: lastName, age: age, signature: signature, status: true, image_url: imageUrl })
+      .insert({ username: username, email: email, password: hashPassword, first_name: firstName, last_name: lastName, age: age, role: role, signature: signature, status: true, image_url: imageUrl })
       .select()
 
     if (err) {

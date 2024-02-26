@@ -157,24 +157,25 @@ export const getProjectById = async (req, res) => {
   try {
     const { id } = req.params
 
-    const { data: project, error } = await supabase
+    const { data: projects, error: err } = await supabase
       .from('project')
-      .select(`id,project_name, description,budget,target_time,start_time,image_url,project_url ,city (name, province(name))`)
+      .select('id,project_name, description,budget,width,height,target_time,start_time,image_url ,city (name, province(name))')
       .eq('id', id)
 
-    if (error) {
-      return res.status(500).json({ status: 'error', error: error.message });
+    if (err) {
+      return res.status(500).json({ status: 'error', error: err.message });
     }
 
-    const formattedData = project.map(project => ({
+    const formattedData = projects.map(project => ({
       id: project.id,
       project_name: project.project_name,
       description: project.description,
       budget: project.budget,
+      width: project.width,
+      height: project.height,
       target_time: project.target_time,
       start_time: project.start_time,
       image_url: project.image_url,
-      project_url: project.project_url,
       city: project.city.name,
       province: project.city.province.name
     }));
@@ -263,7 +264,7 @@ export const getAllProjects = async (req, res) => {
   try {
     const { data: projects, error: err } = await supabase
       .from('project')
-      .select('id,project_name, description,budget,target_time,start_time,image_url ,city (name, province(name))')
+      .select('id,project_name, description,budget,width,height,target_time,start_time,image_url ,city (name, province(name))')
 
     if (err) {
       return res.status(500).json({ status: 'error', error: err.message });
@@ -274,6 +275,8 @@ export const getAllProjects = async (req, res) => {
       project_name: project.project_name,
       description: project.description,
       budget: project.budget,
+      width: project.width,
+      height: project.height,
       target_time: project.target_time,
       start_time: project.start_time,
       image_url: project.image_url,
@@ -312,14 +315,14 @@ export const postProject = async (req, res) => {
     }
 
     const { image, report } = req.files;
-    const { projectName, description, budget, targetTime, startTime, cityId } = req.body
+    const { projectName, description, budget, targetTime, width, height, startTime, cityId } = req.body
 
     const imageUrl = await imageUpload('public', 'project_images', image)
     const reportUrl = await imageUpload('public', 'project_report', report)
 
     const { data: project, error: err } = await supabase
       .from('project')
-      .insert({ project_name: projectName, description: description, budget: budget, target_time: targetTime, start_time: startTime, image_url: imageUrl, report_url: reportUrl, city_id: cityId })
+      .insert({ project_name: projectName, description: description, budget: budget, target_time: targetTime, width: width, height: height, start_time: startTime, image_url: imageUrl, report_url: reportUrl, city_id: cityId })
       .select()
 
     if (err) {
@@ -350,7 +353,7 @@ export const getProjectByCityId = async (req, res) => {
     const { id } = req.params
     const { data: projects, error: err } = await supabase
       .from('project')
-      .select('id,project_name, description,budget,target_time,start_time,image_url ,city (name, province(name))')
+      .select('id,project_name, description,budget,width,height,target_time,start_time,image_url ,city (name, province(name))')
       .eq('city_id', id)
 
     if (err) {
@@ -362,6 +365,8 @@ export const getProjectByCityId = async (req, res) => {
       project_name: project.project_name,
       description: project.description,
       budget: project.budget,
+      width: project.width,
+      height: project.height,
       target_time: project.target_time,
       start_time: project.start_time,
       image_url: project.image_url,
@@ -398,7 +403,7 @@ export const projectSubmission = async (req, res) => {
       return response
     }
 
-    const { name, village, address, reason, } = req.body;
+    const { name, village, address, reason, width, height } = req.body;
     const { id } = req.params
     const { image, proposal } = req.files
 
@@ -407,7 +412,7 @@ export const projectSubmission = async (req, res) => {
 
     const { data: submission, error: err } = await supabase
       .from('project_submission')
-      .insert({ name: name, village: village, address: address, reason: reason, image_url: imageUrl, proposal_url: proposalUrl, user_id: id })
+      .insert({ name: name, village: village, address: address, reason: reason, width: width, height: height, image_url: imageUrl, proposal_url: proposalUrl, user_id: id })
       .select()
 
     if (err) {
