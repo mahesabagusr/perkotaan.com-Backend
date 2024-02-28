@@ -19,6 +19,13 @@ export const uploadProjectSchema = joi.object().keys({
   cityId: joi.number().required().messages({
     'string.empty': 'Harap isi city_id'
   }),
+  width: joi.number().required().messages({
+    'string.empty': 'Harap isi city_id'
+  }),
+  height: joi.number().required().messages({
+    'string.empty': 'Harap isi city_id'
+  }),
+
   // imageUrl: joi.string().required().messages({
   //   'string.empty': 'Harap isi image'
   // })
