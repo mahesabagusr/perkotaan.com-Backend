@@ -1,6 +1,21 @@
 import express from 'express';
 import { getUser, signIn, signUp, verifyOtp, logOut } from '../controller/userController.js';
-import { getProjectById, getProjectWithPagination, getAllProjects, postProject, searchCity, searchProvince, getProvince, getCity, getCityById, getCityByProvinceId, getProjectByCityId, searchProjects, projectSubmission, porjectSubmissionHistory } from '../controller/projectController.js'
+import { 
+  getProjectById, 
+  getProjectWithPagination, 
+  getAllProjects,
+  postProject,
+  searchCity, 
+  searchProvince,
+  getProvince, 
+  getCity, 
+  getCityById,
+  getCityByProvinceId, 
+  getProjectByCityId, 
+  searchProjects, 
+  projectSubmission,
+  projectSubmissionHistory,
+  projectSubmissionHistoryById } from '../controller/projectController.js'
 import { verifyToken } from '../middlewares/jwt.js';
 import { refreshToken } from '../controller/refreshToken.js';
 import { imageUpload } from '../services/projectService.js';
@@ -31,7 +46,8 @@ router.get('/city/get/province/:id', getCityByProvinceId)
 //Project Routes
 router.post('/project/upload', postProject)
 router.post('/project/submission/:id', projectSubmission)
-router.get('/project/submission/history/:id', porjectSubmissionHistory)
+router.get('/project/submission/history/:id', projectSubmissionHistoryById)
+router.get('/project/submission/history', projectSubmissionHistory)
 router.get('/project/get/:page/:pageSize', getProjectWithPagination)
 router.post('/project/city/search', searchProjects)
 router.get('/project/get', getAllProjects)

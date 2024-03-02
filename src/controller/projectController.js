@@ -403,16 +403,15 @@ export const projectSubmission = async (req, res) => {
       return response
     }
 
-    const { name, village, address, reason, width, height } = req.body;
+    const { name, address, nik, width, height, city_id } = req.body;
     const { id } = req.params
-    const { image, proposal } = req.files
+    const { image } = req.files
 
     const imageUrl = await imageUpload('public', 'submission_images', image)
-    const proposalUrl = await imageUpload('public', 'submission_proposal', proposal)
 
     const { data: submission, error: err } = await supabase
       .from('project_submission')
-      .insert({ name: name, village: village, address: address, reason: reason, width: width, height: height, image_url: imageUrl, proposal_url: proposalUrl, user_id: id })
+      .insert({ name: name, address: address, nik: nik, width: width, height: height, image_url: imageUrl, user_id: id, city_id: city_id })
       .select()
 
     if (err) {
@@ -434,14 +433,14 @@ export const projectSubmission = async (req, res) => {
   }
 }
 
-export const porjectSubmissionHistory = async (req, res) => {
+export const projectSubmissionHistoryById = async (req, res) => {
   try {
 
     const { id } = req.params
 
     const { data, error } = await supabase
       .from('project_submission')
-      .select('name,village,address,reason,image_url,proposal_url')
+      .select('name,address,nik,price,width,height,image_url,user_id, city(name, province(name))')
       .eq('user_id', id)
 
     if (error) {
@@ -452,14 +451,103 @@ export const porjectSubmissionHistory = async (req, res) => {
       return response
     }
 
+    const formattedData = data.map(project => ({
+      name: project.name,
+      address: project.address,
+      nik: project.nik,
+      price: project.price,
+      width: project.width,
+      height: project.height,
+      image_url: project.image_url,
+      user_id: project.user_id,
+      city: project.city.name,
+      province: project.city.province.name
+    }));
+
     return res.status(200).json({
       status: 'success',
-      data: data
+      data: formattedData,
     })
 
   } catch (err) {
     return res.status(500).json({ status: 'error', error: err.message });
   }
-
-
 }
+
+export const projectSubmissionHistory = async (req, res) => {
+  try {
+
+    const { id } = req.params
+
+    const { data, error } = await supabase
+      .from('project_submission')
+      .select('name,address,nik,price,width,height,image_url,user_id, city(name, province(name))')
+
+    if (error) {
+      const response = res.status(400).json({
+        status: 'fail',
+        message: `Get Gagal, ${error.message}`
+      })
+      return response
+    }
+
+    const formattedData = data.map(project => ({
+      name: project.name,
+      address: project.address,
+      nik: project.nik,
+      price: project.price,
+      width: project.width,
+      height: project.height,
+      image_url: project.image_url,
+      user_id: project.user_id,
+      city: project.city.name,
+      province: project.city.province.name
+    }));
+
+    return res.status(200).json({
+      status: 'success',
+      data: formattedData,
+    })
+
+  } catch (err) {
+    return res.status(500).json({ status: 'error', error: err.message });
+  }
+}
+
+// export const projectSubmissionHistory = async (req, res) => {
+//   try {
+
+//     const { data, error } = await supabase
+//       .from('project_submission')
+//       .select('name,address,nik,price,width,height,image_url,user_id, city(name, province(name))')
+
+//     if (error) {
+//       const response = res.status(400).json({
+//         status: 'fail',
+//         message: `Get Gagal, ${error.message}`
+//       })
+//       return response
+//     }
+
+//     const formattedData = data.map(project => ({
+//       name: project.name,
+//       address: project.address,
+//       nik: project.nik,
+//       price: project.price,
+//       width: project.width,
+//       height: project.height,
+//       image_url: project.image_url,
+//       user_id: project.user_id,
+//       city: project.city.name,
+//       province: project.city.province.name
+//     }));
+
+//     return res.status(200).json({
+//       status: 'success',
+//       data: data,
+//     })
+
+//   } catch (err) {
+//     return res.status(500).json({ status: 'error', error: err.message });
+//   }
+// }
