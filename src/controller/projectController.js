@@ -322,7 +322,7 @@ export const postProject = async (req, res) => {
 
     const { data: project, error: err } = await supabase
       .from('project')
-      .insert({ project_name: projectName, description: description, budget: budget, target_time: targetTime, width: width, height: height, start_time: startTime, image_url: imageUrl, report_url: reportUrl, city_id: cityId })
+      .insert({ project_name: projectName, description: description, budget: budget, target_time: targetTime, width: width, height: height, start_time: startTime, image_url: imageUrl, project_url: reportUrl, city_id: cityId })
       .select()
 
     if (err) {
