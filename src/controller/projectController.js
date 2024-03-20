@@ -297,7 +297,7 @@ export const getAllProjects = async (req, res) => {
 
 export const postProject = async (req, res) => {
   try {
-    if (!req.files.image || !req.files.proposal) {
+    if (!req.files.image || !req.files.report) {
       res.status(422).json({
         status: 'fail',
         message: 'Image harus di upload'

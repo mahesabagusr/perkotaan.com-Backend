@@ -3,9 +3,7 @@ import fileUpload from "express-fileupload";
 import { config } from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import multer from "multer"
 import router from "./src/routes/routes.js"
-import supabase from "./src/config/supabaseConfig.js";
 
 
 config({ path: '.env' })
