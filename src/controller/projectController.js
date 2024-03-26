@@ -159,7 +159,7 @@ export const getProjectById = async (req, res) => {
 
     const { data: projects, error: err } = await supabase
       .from('project')
-      .select('id,project_name, description,budget,width,height,target_time,start_time,image_url ,city (name, province(name))')
+      .select('id,project_name, description,budget,width,height,target_time,start_time,project_url,image_url ,city (name, province(name))')
       .eq('id', id)
 
     if (err) {
@@ -176,6 +176,7 @@ export const getProjectById = async (req, res) => {
       target_time: project.target_time,
       start_time: project.start_time,
       image_url: project.image_url,
+      project_url: project.project_url,
       city: project.city.name,
       province: project.city.province.name
     }));
